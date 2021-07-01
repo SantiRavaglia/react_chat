@@ -20,7 +20,7 @@ function App() {
   const [loggedUser, setLoggedUser] = useState('Sergio Denis');
   const [currentChatUser, setCurrentChatUser] = useState( 'Laura Gonzalez' );
 
-  useEffect(() => {
+  useEffect(() => { // TRAER TODOS LOS USUARIOS CON SUS FOTOS Y MENSAJES CORRESPONDIENTES
     const fetchData = async () => {
       setLoading(true);
       const db = firebase.firestore();
@@ -33,7 +33,7 @@ function App() {
     fetchData();
   }, [])
 
-  const sendMessageHandler = inputValue => {
+  const sendMessageHandler = inputValue => { // ENVIAR MENSAJE A DB Y ACTUALIZAR ESTADO PARA RENDERIZARLO
     const newMessage = { ...(users.filter(user => user.name === loggedUser)[0]) }
 
     let sentMessageMap = {message: inputValue, timestamp: firebase.firestore.Timestamp.fromDate(new Date()), receiver: currentChatUser}
@@ -52,15 +52,15 @@ function App() {
     setUsers(usersAux);
   }
 
-  const changeContactHandler = user => {
+  const changeContactHandler = user => { // CAMBIAR EL USUARIO CUYO CHAT TENEMOS ABIERTO
     setCurrentChatUser(user.name)
   }
 
-  const changeUserHandler = username => {
+  const changeUserHandler = username => { // CAMBIAR USIARIO LOGEADO
     setLoggedUser(users.filter(user => user.name === username)[0].name)
   }
 
-  async function addUserHandler() {
+  async function addUserHandler() { // AGREGAR USUARIO DE API
     const data = await fetchData();
     const id = uuid();
     

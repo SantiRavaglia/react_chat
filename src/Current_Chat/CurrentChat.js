@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useRef} from "react";
 import ChatMessage from "./ChatMessage.js";
 import styled from 'styled-components';
 import uuid from 'react-uuid';
@@ -25,44 +25,38 @@ const MessageList = styled.div`
 
 const CurrentChat = props => {
 
-    // let arrMessages = [];
-    let arrMessages2 = [];
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    let arrMessages = [];
 
-    props.users.map((currUser, indexU) => {
+    props.users.map((currUser, indexU) => { // ARRAY CON LOS MENSAJES CUYO EMISOR ES EL USUARIO LOGGEADO Y RECEPTOR EL DEL 
+                                            // CHAT SELECCIONADO Y VICEVERSA PARA MOSTRARLOS EN EL CHAT
+        // eslint-disable-next-line array-callback-return
         return currUser.messages.map(currMsg => {
             if ((currMsg.receiver === props.currentChatUser.name && currUser.name === props.loggedUser.name) ||
              (currMsg.receiver === props.loggedUser.name && currUser.name === props.currentChatUser.name)) {
-                arrMessages2.push({ sentBy: currUser.name, pfp: currUser.pfp, message: currMsg });
+                arrMessages.push({ sentBy: currUser.name, pfp: currUser.pfp, message: currMsg });
              }
         })
     })
     
-    
+    arrMessages.sort((msg1, msg2) => (msg1.message.timestamp > msg2.message.timestamp) ? 1 : -1);
 
-    // for (let i = 0; i < props.users.length; i++) {
-    //     const currUser = props.users[i];
+    const messageBottom = useRef();
 
-    //     for (let j = 0; j < currUser.messages.length; j++) {
-    //         const currMsg = props.users[i].messages[j];
-    //         if ((currMsg.receiver === props.currentChatUser.name && currUser.name === props.loggedUser.name) || (currMsg.receiver === props.loggedUser.name && currUser.name === props.currentChatUser.name)) {
-    //             arrMessages.push({ sentBy: currUser.name, pfp: currUser.pfp, message: currMsg });
-    //         }
-    //     }
-    // }
-    
+    const scrollToBottom = () => {
+        messageBottom.current.scrollIntoView({behavior: 'smooth'});
+    }
 
-    
-
-    // arrMessages.sort((msg1, msg2) => (msg1.message.timestamp > msg2.message.timestamp) ? 1 : -1);
-    arrMessages2.sort((msg1, msg2) => (msg1.message.timestamp > msg2.message.timestamp) ? 1 : -1);
-
+    useEffect(() => { // AL MANDAR UN MENSAJE BAJA HASTA EL FONDO DEL CHAT
+        scrollToBottom();
+    }, [arrMessages])
 
     return (
         <Container>
             <CurrentChatUser loggedUser={props.loggedUser} currentChatUser={props.currentChatUser} />
             <MessageList>
-                {arrMessages2.length !== 0 ? 
-                arrMessages2.map((msg) => 
+                {arrMessages.length !== 0 ? 
+                arrMessages.map((msg) => 
                 <ChatMessage 
                 sentBy={msg.sentBy} 
                 pfp={msg.pfp} 
@@ -70,6 +64,7 @@ const CurrentChat = props => {
                 message={msg.message} 
                 key={uuid()} />) : 
                 []}
+                <div ref={messageBottom}/>
             </MessageList>
             <Input loggedUser={props.loggedUser} sendMessageHandler={props.sendMessageHandler} />
         </Container>

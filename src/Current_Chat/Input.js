@@ -1,7 +1,7 @@
 import { useRef } from 'react';
 import styled from 'styled-components';
 
-const Container = styled.div`
+const Container = styled.form` //era div
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -16,7 +16,9 @@ const InputMessage = styled.input`
     border-radius: 20px;
     font-family: Montserrat;
     border: none;
+    outline: none;
     background: #e1e7e8;
+    padding-left: 15px;
     `
 
 const SendButton = styled.button`
@@ -35,7 +37,8 @@ const Input = props => {
 
     let inputValueRef = useRef();
 
-    const sendMessageHandler = () => {
+    const sendMessageHandler = e => {
+        e.preventDefault();
         props.sendMessageHandler(inputValueRef.current.value);
         inputValueRef.current.value = '';
         inputValueRef.current.focus();
@@ -43,10 +46,12 @@ const Input = props => {
 
     return (
         <>
-            <Container>
-                <InputMessage type='text' ref={inputValueRef} ></InputMessage>
-                <SendButton onClick={sendMessageHandler}>SEND</SendButton>
-            </Container>
+            {/* <Container> */}
+                <Container onSubmit={sendMessageHandler}>
+                <InputMessage type='text' ref={inputValueRef}/>
+                <SendButton type='submit'>SEND</SendButton>
+                </Container>
+            {/* </Container> */}
         </>
     )
 }

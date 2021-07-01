@@ -9,15 +9,14 @@ const Container = styled.div`
     ${props => props.currentChatUser === props.contactUser && 'background: #595959'};
     `
 
-// const SelectedContactLine = styled.div`
-//     display: flex;
-//     border: 1px solid #ff3636;
-//     justify-content: flex-end;
-//     `
+const SelectedContactLine = styled.div`
+    display: flex;
+    border: 1px solid #ff3636;
+    justify-content: flex-end;
+    `
 
 const UserDataContainer = styled.div`
     display: flex;
-    justify-content: space-between;
     `
 
 const UserPFP = styled.img`
@@ -29,7 +28,7 @@ const UserPFP = styled.img`
 const TextContainer = styled.div`
     display: flex;
     flex-direction: column;
-    // align-items: center;
+    justify-content: space-evenly;
     font-family: Montserrat;
     padding-left: 10px;
     `
@@ -49,48 +48,55 @@ const Time = styled.label`
     font-size: 10px;
     text-align: right;
     `
-const DataContainer = styled.div`
-    display: flex;
-    justify-content: space-between;
+
+    const MiscContainer = styled.div`
+    display:flex;
+    flex-direction: row;
+    justify-content: flex-end;
     `
+// const DataContainer = styled.div`
+//     display: flex;
+//     justify-content: space-between;
+//     `
 
 const Contact = props => {
 
-    const displayLastMessage = () => {
+    const displayLastMessage = () => { // SELECCIONA EL ULTIMO MENSAJE QUE TUVIERON DOS USUARIOS PARA CARGARLO EN LA PREVIEW
+        // eslint-disable-next-line array-callback-return
         const shownMessages = [...props.contactUser.messages, ...props.loggedUser.messages].filter(currMsg => {
             if (currMsg.receiver === props.contactUser.name || currMsg.receiver === props.loggedUser.name) {
                 return currMsg;
             }
         })
         if (shownMessages.length > 0) {
-            return  shownMessages.reduce((max, value) => value.timestamp > max.timestamp ? value : max);
+            return shownMessages.reduce((max, value) => value.timestamp > max.timestamp ? value : max);
         } else {
-            return {message: '', timestamp: 0, receiver: ''}
+            return { message: '', timestamp: 0, receiver: '' }
         }
     }
-    
 
-    function pad(a, b) {
-        return (1e15 + a + '').slice(-b);
+
+    function pad(a, b) { // SI LA HORA ES DE SOLO UN DIGITO, LE AGREGA UN 0 ADELANTE 
+        return (1e3 + a + '').slice(-b);
     }
 
-    const changeContactHandler = () => {
+    const changeContactHandler = () => { // SI CLICKEO UN CONTACTO, CAMBIA DE CHAT Y ACTUALIZA EL ESTADO
         props.changeContactHandler(props.contactUser)
     }
 
     return (
         <Container currentChatUser={props.currentChatUser} contactUser={props.contactUser} onClick={changeContactHandler}>
-            <DataContainer>
-                <UserDataContainer>
-                    <UserPFP src={props.contactUser.pfp} />
-                    <TextContainer>
-                        <UserName>{props.contactUser.name}</UserName>
-                        <LastMessage>{displayLastMessage().message}</LastMessage>
-                    </TextContainer>    
-                </UserDataContainer>
-                {displayLastMessage().timestamp !== 0 && <Time>{pad(new Date(displayLastMessage().timestamp * 1000).getHours(), 2) + ':' + pad(new Date(displayLastMessage().timestamp * 1000).getMinutes(), 2)}</Time>}
-            </DataContainer>
-            {props.currentChatUser.name === props.contactUser.name /* && <SelectedContactLine />*/}
+            <UserDataContainer>
+                <UserPFP src={props.contactUser.pfp} />
+                <TextContainer>
+                    <UserName>{props.contactUser.name}</UserName>
+                    <LastMessage>{displayLastMessage().message.length > 40 ? displayLastMessage().message.substring(0, 40) + '...' : displayLastMessage().message}</LastMessage>
+                </TextContainer>
+            </UserDataContainer>
+            <MiscContainer>
+            {displayLastMessage().timestamp !== 0 && <Time>{pad(new Date(displayLastMessage().timestamp * 1000).getHours(), 2) + ':' + pad(new Date(displayLastMessage().timestamp * 1000).getMinutes(), 2)}</Time>}
+            {props.contactUser.name === props.currentChatUser.name && <SelectedContactLine/>}
+            </MiscContainer>
         </Container>
     )
 }

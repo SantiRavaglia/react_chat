@@ -47,7 +47,7 @@ const MessageRow = styled.div`
 
 const ChatMessage = props => {
 
-    function pad(a, b) {
+    function pad(a, b) { // SI LA HORA ES DE SOLO UN DIGITO, LE AGREGA UN 0 ADELANTE 
         return (1e15 + a + '').slice(-b);
     }
 

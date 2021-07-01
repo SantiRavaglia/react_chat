@@ -55,7 +55,7 @@ const ChangeUserContainer = styled.div`
 
     `
 
-    const UserSelection = styled.select`
+const UserSelection = styled.select`
     padding-left: 5px;
     font-family: Montserrat;
     `
@@ -64,15 +64,12 @@ const ChangeUser = props => {
 
     const [changingUser, setChangingUser] = useState(false);
 
-    const changeUserHandler = event => {
-        if(changingUser === false) { setChangingUser(true) }
-        else {
-            props.changeUserHandler(event.target.value); 
-            setChangingUser(false) 
-        }
+    const changeUserHandler = event => { // CAMBIA DE USUARIO Y ACTUALIZA EL ESTADO
+        props.changeUserHandler(event.target.value);
+        setChangingUser(false)
     }
 
-    const alternateChangingUserHandler = () => {
+    const alternateChangingUserHandler = () => { // ALTERNA EL ESTADO DE CAAMBIAR USUARIO Y 
         changingUser ? setChangingUser(false) : setChangingUser(true);
     }
 
@@ -83,10 +80,10 @@ const ChangeUser = props => {
                 <UserName>{props.loggedUser.name}</UserName>
                 <ChangeUserContainer>
                     <ChangeUserButton onClick={alternateChangingUserHandler}>Change User</ChangeUserButton>
-                    {changingUser && 
-                    <UserSelection onChange={changeUserHandler} value={props.loggedUser.name}>
-                        {props.users.map(user => <option value={user.name} key={user.id}>{user.name}</option>)}
-                    </UserSelection>}
+                    {changingUser &&
+                        <UserSelection onChange={changeUserHandler} value={props.loggedUser.name}>
+                            {props.users.map(user => <option value={user.name} key={user.id}>{user.name}</option>)}
+                        </UserSelection>}
                 </ChangeUserContainer>
                 <AddUserButton onClick={props.addUserHandler}>Add User</AddUserButton>
             </User>
